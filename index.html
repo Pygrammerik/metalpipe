@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Metal pipe</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+    }
+    img {
+      max-width: 90vw;
+      max-height: 90vh;
+      cursor: pointer;
+      -webkit-user-select: none; /* Safari/iOS */
+      user-select: none;
+    }
+  </style>
+  <meta name="description" content="Клик по рыбе — звук" />
+  <meta name="color-scheme" content="light dark" />
+</head>
+<body>
+  <img id="metalpipeImage" src="metalpipe.png" alt="metalpipe" />
+  <audio id="metalpipeSound" src="metalpipe.mp3" preload="auto"></audio>
+  <script>
+    (function () {
+      var audio = document.getElementById('metalpipeSound');
+      var img = document.getElementById('metalpipeImage');
+      function playSound(ev) {
+        if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+        var attempt = function () {
+          try {
+            audio.currentTime = 0;
+            var p = audio.play();
+            if (p && typeof p.catch === 'function') {
+              p.catch(function () {});
+            }
+          } catch (e) {
+            // As a fallback, force reload then retry
+            try { audio.load(); } catch (_) {}
+            setTimeout(function () {
+              try { audio.currentTime = 0; audio.play().catch(function () {}); } catch (e2) {}
+            }, 0);
+          }
+        };
+
+        attempt();
+      }
+
+      // Use a single pointer event to avoid duplicate click/touch triggers
+      img.addEventListener('pointerup', playSound);
+
+      // Prevent context menu on long-press which may interfere with gesture
+      img.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    })();
+  </script>
+  
+</body>
+</html>
+
